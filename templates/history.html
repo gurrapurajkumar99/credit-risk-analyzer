@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History — Credit Risk Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10; --surface: #0e1520; --surface2: #131d2a;
+    --border: rgba(255,255,255,0.07); --text: #e8edf5; --muted: #5a6a7e;
+    --accent: #63b3ed; --green: #68d391; --orange: #f6ad55; --danger: #fc8181;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none; z-index: 0;
+  }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px; border-bottom: 1px solid var(--border);
+    background: rgba(8,12,16,0.85); backdrop-filter: blur(20px);
+  }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: -0.5px; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted);
+    text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.2s; border: 1px solid transparent;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); border-color: rgba(99,179,237,0.4); background: rgba(99,179,237,0.08); }
+
+  .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 120px 48px 80px; }
+
+  h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 36px; letter-spacing: -1px; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 48px; }
+
+  .table-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+    padding: 16px 20px; text-align: left; font-weight: 400;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(99,179,237,0.04); }
+
+  td {
+    padding: 16px 20px; font-size: 13px;
+    font-family: 'DM Mono', monospace; vertical-align: middle;
+  }
+
+  .risk-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 100px; font-size: 11px;
+    border: 1px solid;
+  }
+  .pill-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .low { color: var(--green); border-color: rgba(104,211,145,0.3); }
+  .low .pill-dot { background: var(--green); }
+  .medium { color: var(--orange); border-color: rgba(246,173,85,0.3); }
+  .medium .pill-dot { background: var(--orange); }
+  .high { color: var(--danger); border-color: rgba(252,129,129,0.3); }
+  .high .pill-dot { background: var(--danger); }
+
+  .score-num { font-weight: 500; font-size: 15px; }
+
+  .empty-state {
+    text-align: center; padding: 80px 40px;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 13px;
+  }
+  .empty-state a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .page { padding: 100px 20px 60px; }
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4) { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">CREDIT<span>RISK</span></div>
+  <ul class="nav-links">
+    <li><a href="/">Analyze</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/history" class="active">History</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <h1>Analysis History</h1>
+  <p class="subtitle">All past credit risk evaluations (most recent first)</p>
+
+  <div id="loading" style="text-align:center;padding:60px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px">Loading records...</div>
+
+  <div class="table-card" id="table-wrap" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date & Time</th>
+          <th>Salary</th>
+          <th>Credit Score</th>
+          <th>Employment</th>
+          <th>Rule-Based</th>
+          <th>ML Model</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <div id="empty" class="empty-state" style="display:none">
+    No analyses yet. <a href="/">Run your first one →</a>
+  </div>
+</div>
+
+<script>
+function pillClass(cat) {
+  if (cat === 'Low Risk') return 'low';
+  if (cat === 'Medium Risk') return 'medium';
+  return 'high';
+}
+
+function scoreColor(score) {
+  if (score <= 30) return 'var(--green)';
+  if (score <= 60) return 'var(--orange)';
+  return 'var(--danger)';
+}
+
+async function loadHistory() {
+  try {
+    if (window.location.protocol === 'file:') {
+      throw new Error('Open this page through the Flask app, not as a local file.');
+    }
+
+    const res = await fetch('/api/history');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to load history');
+
+    document.getElementById('loading').style.display = 'none';
+
+    if (!data.length) {
+      document.getElementById('empty').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('table-wrap').style.display = 'block';
+    const tbody = document.getElementById('table-body');
+
+    tbody.innerHTML = data.map((r) => {
+      const cls = pillClass(r.risk_category);
+      const mlCls = pillClass(r.ml_risk_category);
+      return `<tr>
+        <td style="color:var(--muted)">${r.id}</td>
+        <td>${r.created_at}</td>
+        <td>₹${Number(r.salary).toLocaleString('en-IN')}</td>
+        <td>${r.credit_score}</td>
+        <td style="text-transform:capitalize">${r.employment_type}</td>
+        <td>
+          <span class="risk-pill ${cls}">
+            <span class="pill-dot"></span>${r.risk_category}
+          </span>
+        </td>
+        <td>
+          <span class="risk-pill ${mlCls}">
+            <span class="pill-dot"></span>${r.ml_risk_category}
+          </span>
+        </td>
+        <td><span class="score-num" style="color:${scoreColor(r.risk_score)}">${r.risk_score}</span></td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    document.getElementById('loading').textContent = 'Unable to load history: ' + err.message;
+  }
+}
+
+loadHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Risk Analyzer — Intelligent Lending Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0e1520;
+    --surface2: #131d2a;
+    --border: rgba(255,255,255,0.07);
+    --border-active: rgba(99,179,237,0.4);
+    --text: #e8edf5;
+    --muted: #5a6a7e;
+    --accent: #63b3ed;
+    --accent2: #4fd1c5;
+    --gold: #f6c90e;
+    --danger: #fc8181;
+    --green: #68d391;
+    --orange: #f6ad55;
+    --glow: rgba(99,179,237,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(99,179,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,12,16,0.85);
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--accent);
+    border-color: var(--border-active);
+    background: var(--glow);
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 160px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding: 6px 14px;
+    border: 1px solid rgba(99,179,237,0.2);
+    border-radius: 100px;
+    background: rgba(99,179,237,0.05);
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 60px;
+    font-weight: 300;
+  }
+
+  /* FORM CARD */
+  .form-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px 100px;
+  }
+
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  .form-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .form-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px 14px 36px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  select { padding-left: 16px; cursor: pointer; }
+
+  input[type="number"]:focus, select:focus {
+    border-color: var(--border-active);
+    box-shadow: 0 0 0 3px rgba(99,179,237,0.1);
+  }
+
+  /* Credit score slider */
+  .credit-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .credit-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .credit-score-badge {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--accent);
+  }
+
+  .credit-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 10px rgba(99,179,237,0.5);
+    cursor: pointer;
+  }
+
+  .credit-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* Employment toggle */
+  .emp-toggle {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .emp-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .emp-option:hover { border-color: rgba(99,179,237,0.3); }
+
+  .emp-option.selected {
+    border-color: var(--accent);
+    background: rgba(99,179,237,0.08);
+  }
+
+  .emp-icon { font-size: 22px; }
+
+  .emp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .emp-option.selected .emp-label { color: var(--accent); }
+
+  /* Submit button */
+  .analyze-btn {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: #080c10;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .analyze-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  }
+
+  .analyze-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(99,179,237,0.35);
+  }
+
+  .analyze-btn:active { transform: translateY(0); }
+
+  .analyze-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: #080c10;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESULTS SECTION */
+  #results {
+    display: none;
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px 100px;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .results-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card.full { grid-column: 1 / -1; }
+
+  /* Score Card */
+  .score-card {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .score-circle {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    flex-shrink: 0;
+  }
+
+  .score-circle svg {
+    width: 130px;
+    height: 130px;
+    transform: rotate(-90deg);
+  }
+
+  .score-circle-bg {
+    fill: none;
+    stroke: var(--surface2);
+    stroke-width: 8;
+  }
+
+  .score-circle-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .score-number {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-number-val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .score-number-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .score-info { flex: 1; }
+
+  .risk-category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+    border: 1px solid;
+  }
+
+  .risk-low { color: var(--green); border-color: rgba(104,211,145,0.3); background: rgba(104,211,145,0.08); }
+  .risk-medium { color: var(--orange); border-color: rgba(246,173,85,0.3); background: rgba(246,173,85,0.08); }
+  .risk-high { color: var(--danger); border-color: rgba(252,129,129,0.3); background: rgba(252,129,129,0.08); }
+
+  .score-description {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ML Comparison */
+  .ml-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .ml-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ml-result {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* Explanations */
+  .explanation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .explanation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .exp-severity {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .sev-high { background: var(--danger); box-shadow: 0 0 6px rgba(252,129,129,0.5); }
+  .sev-medium { background: var(--orange); box-shadow: 0 0 6px rgba(246,173,85,0.5); }
+  .sev-low { background: var(--green); box-shadow: 0 0 6px rgba(104,211,145,0.5); }
+
+  .exp-content { flex: 1; }
+
+  .exp-factor {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .exp-message { font-size: 13px; color: var(--text); }
+
+  .exp-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Financial breakdown bars */
+  .breakdown-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 70px;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .bar-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0;
+  }
+
+  .bar-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    text-align: right;
+  }
+
+  /* Suggestions */
+  .suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .suggestion-card {
+    padding: 20px;
+    background: var(--surface2);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .suggestion-card:hover { border-color: rgba(99,179,237,0.2); }
+
+  .sug-icon { font-size: 24px; margin-bottom: 10px; }
+
+  .sug-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .sug-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  .sug-priority {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .pri-high { color: var(--danger); border-color: rgba(252,129,129,0.3); }
+  .pri-medium { color: var(--orange); border-color: rgba(246,173,85,0.3); }
+  .pri-low { color: var(--muted); border-color: var(--border); }
+  .pri-positive { color: var(--green); border-color: rgba(104,211,145,0.3); }
+
+  /* Card headings */
+  .card-head {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ML Probabilities */
+  .prob-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .prob-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .prob-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .prob-pct { color: var(--text); }
+
+  .prob-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .prob-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0;
+  }
+
+  /* Error toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--surface);
+    border: 1px solid rgba(252,129,129,0.3);
+    border-radius: 12px;
+    padding: 16px 24px;
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    z-index: 999;
+    display: none;
+    animation: toastIn 0.3s ease;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero, .form-container, #results { padding-left: 20px; padding-right: 20px; }
+    .form-grid, .results-grid { grid-template-columns: 1fr; }
+    .score-card { flex-direction: column; text-align: center; }
+    .emp-toggle { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 100px 1fr 60px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">CREDIT<span>RISK</span></div>
+  <ul class="nav-links">
+    <li><a href="/" class="active">Analyze</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/history">History</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">AI-Powered Credit Intelligence</div>
+  <h1>Evaluate Loan <em>Eligibility</em><br>Before You Apply</h1>
+  <p class="hero-sub">Enter your financial profile and get an instant risk assessment powered by rule-based scoring and ML classification.</p>
+</section>
+
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-section-title">Financial Profile</div>
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Monthly Salary</label>
+        <div class="input-wrap">
+          <span class="input-prefix">₹</span>
+          <input type="number" id="salary" placeholder="75000" min="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Existing Loan EMIs (monthly)</label>
+        <div class="input-wrap">
+          <span class="input-prefix">₹</span>
+          <input type="number" id="existing_loans" placeholder="15000" min="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Monthly Expenses</label>
+        <div class="input-wrap">
+          <span class="input-prefix">₹</span>
+          <input type="number" id="monthly_expenses" placeholder="30000" min="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Credit History Score</label>
+        <div class="credit-wrap">
+          <div class="credit-display">
+            <span class="credit-score-badge" id="credit-val">750</span>
+            <span class="credit-tier" id="credit-tier">Good</span>
+          </div>
+          <input type="range" id="credit_score" min="300" max="900" value="750" oninput="updateCreditDisplay(this.value)">
+          <div class="credit-labels">
+            <span>300 · Poor</span>
+            <span>580 · Fair</span>
+            <span>740 · Good</span>
+            <span>900 · Excellent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field full">
+        <label>Employment Type</label>
+        <div class="emp-toggle">
+          <div class="emp-option selected" onclick="selectEmp('salaried', this)">
+            <span class="emp-icon">💼</span>
+            <span class="emp-label">Salaried</span>
+          </div>
+          <div class="emp-option" onclick="selectEmp('self-employed', this)">
+            <span class="emp-icon">🏢</span>
+            <span class="emp-label">Self-Employed</span>
+          </div>
+          <div class="emp-option" onclick="selectEmp('student', this)">
+            <span class="emp-icon">🎓</span>
+            <span class="emp-label">Student</span>
+          </div>
+        </div>
+        <input type="hidden" id="employment_type" value="salaried">
+      </div>
+
+    </div>
+
+    <button class="analyze-btn" id="analyzeBtn" type="button">
+      <div class="btn-spinner" id="spinner"></div>
+      <span id="btn-text">Run Risk Analysis →</span>
+    </button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-title">Analysis Results</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)" id="result-timestamp"></div>
+  </div>
+
+  <div class="results-grid">
+
+    <!-- Score Card -->
+    <div class="result-card">
+      <div class="card-head">Risk Score</div>
+      <div class="score-card">
+        <div class="score-circle">
+          <svg viewBox="0 0 130 130">
+            <circle class="score-circle-bg" cx="65" cy="65" r="54"/>
+            <circle class="score-circle-fill" id="score-arc" cx="65" cy="65" r="54"
+              stroke-dasharray="0 339.29" stroke-dashoffset="0"/>
+          </svg>
+          <div class="score-number">
+            <div class="score-number-val" id="score-display">--</div>
+            <div class="score-number-label">/ 100</div>
+          </div>
+        </div>
+        <div class="score-info">
+          <div class="risk-category-badge" id="risk-badge">—</div>
+          <div class="score-description" id="score-desc">—</div>
+          <div class="ml-badge">
+            <div class="ml-label">
+              <span>🤖</span> ML Model (Logistic Regression)
+            </div>
+            <div class="ml-result" id="ml-result">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Breakdown -->
+    <div class="result-card">
+      <div class="card-head">Financial Breakdown</div>
+      <div class="breakdown-bars" id="breakdown-bars"></div>
+    </div>
+
+    <!-- ML Probabilities -->
+    <div class="result-card">
+      <div class="card-head">ML Prediction Confidence</div>
+      <div class="prob-bars" id="prob-bars"></div>
+    </div>
+
+    <!-- Explanations -->
+    <div class="result-card">
+      <div class="card-head">Risk Factors</div>
+      <div class="explanation-list" id="explanations"></div>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="result-card full">
+      <div class="card-head">Smart Recommendations</div>
+      <div class="suggestions-grid" id="suggestions"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let employmentType = 'salaried';
+
+function selectEmp(type, el) {
+  document.querySelectorAll('.emp-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  employmentType = type;
+  document.getElementById('employment_type').value = type;
+}
+
+function updateCreditDisplay(val) {
+  document.getElementById('credit-val').textContent = val;
+  const tier = document.getElementById('credit-tier');
+  val = parseInt(val);
+  if (val < 580) { tier.textContent = 'Poor'; tier.style.color = 'var(--danger)'; tier.style.borderColor = 'rgba(252,129,129,0.3)'; }
+  else if (val < 670) { tier.textContent = 'Fair'; tier.style.color = 'var(--orange)'; tier.style.borderColor = 'rgba(246,173,85,0.3)'; }
+  else if (val < 740) { tier.textContent = 'Good'; tier.style.color = 'var(--accent)'; tier.style.borderColor = 'rgba(99,179,237,0.3)'; }
+  else { tier.textContent = 'Excellent'; tier.style.color = 'var(--green)'; tier.style.borderColor = 'rgba(104,211,145,0.3)'; }
+}
+updateCreditDisplay(750);
+
+document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+
+async function runAnalysis() {
+  if (window.location.protocol === 'file:') {
+    showToast('Open this page through the Flask app at http://127.0.0.1:5000, not as a local file.');
+    return;
+  }
+
+  const btn = document.getElementById('analyzeBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btn-text');
+
+  const payload = {
+    salary: parseFloat(document.getElementById('salary').value),
+    existing_loans: parseFloat(document.getElementById('existing_loans').value),
+    monthly_expenses: parseFloat(document.getElementById('monthly_expenses').value),
+    credit_score: parseInt(document.getElementById('credit_score').value),
+    employment_type: employmentType
+  };
+
+  if (isNaN(payload.salary)) {
+    showToast('Please enter your monthly salary.');
+    return;
+  }
+  if (isNaN(payload.existing_loans)) payload.existing_loans = 0;
+  if (isNaN(payload.monthly_expenses)) payload.monthly_expenses = 0;
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  btnText.textContent = 'Analyzing...';
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({ error: 'Server returned an invalid response' }));
+    if (!res.ok) throw new Error(data.error || 'Analysis failed');
+    renderResults(data, payload);
+  } catch (err) {
+    const message = err instanceof TypeError
+      ? 'Cannot reach the Flask server. Start it with: python3 app.py'
+      : err.message;
+    showToast('Error: ' + message);
+  } finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    btnText.textContent = 'Run Risk Analysis →';
+  }
+}
+
+function renderResults(data, payload) {
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('result-timestamp').textContent = new Date().toLocaleString();
+
+  const score = data.risk_score;
+  const category = data.risk_category;
+
+  // Score arc
+  const circ = 2 * Math.PI * 54;
+  const fill = (score / 100) * circ;
+  const arc = document.getElementById('score-arc');
+  const color = category === 'Low Risk' ? 'var(--green)' : category === 'Medium Risk' ? 'var(--orange)' : 'var(--danger)';
+  arc.style.stroke = color;
+  setTimeout(() => { arc.style.strokeDasharray = `${fill} ${circ - fill}`; }, 100);
+
+  // Score number
+  let num = 0;
+  const scoreEl = document.getElementById('score-display');
+  scoreEl.style.color = color;
+  const interval = setInterval(() => {
+    num = Math.min(num + Math.ceil(score / 30), score);
+    scoreEl.textContent = num;
+    if (num >= score) clearInterval(interval);
+  }, 30);
+
+  // Badge
+  const badge = document.getElementById('risk-badge');
+  badge.textContent = (category === 'Low Risk' ? '🟢 ' : category === 'Medium Risk' ? '🟡 ' : '🔴 ') + category;
+  badge.className = 'risk-category-badge ' + (category === 'Low Risk' ? 'risk-low' : category === 'Medium Risk' ? 'risk-medium' : 'risk-high');
+
+  // Description
+  const descs = {
+    'Low Risk': 'Your financial profile is strong. You are well-positioned for loan approval at favorable rates.',
+    'Medium Risk': 'Your profile presents moderate risk. Some improvements could significantly enhance your eligibility.',
+    'High Risk': 'Your current profile indicates elevated default risk. Address the flagged factors before applying.'
+  };
+  document.getElementById('score-desc').textContent = descs[category];
+
+  // ML Result
+  const ml = data.ml_prediction || { risk_category: 'Unknown', confidence: 0, probabilities: {} };
+  const mlColor = ml.risk_category === 'Low Risk' ? 'var(--green)' : ml.risk_category === 'Medium Risk' ? 'var(--orange)' : ml.risk_category === 'High Risk' ? 'var(--danger)' : 'var(--muted)';
+  document.getElementById('ml-result').innerHTML = `<span style="color:${mlColor}">${ml.risk_category}</span> <span style="color:var(--muted);font-size:10px">(${ml.confidence}% conf.)</span>`;
+
+  // Financial Breakdown bars
+  const barsEl = document.getElementById('breakdown-bars');
+  const salary = payload.salary;
+  const bars = [
+    { label: 'Loan EMIs', val: payload.existing_loans, color: 'var(--danger)' },
+    { label: 'Expenses', val: payload.monthly_expenses, color: 'var(--orange)' },
+    { label: 'Net Savings', val: Math.max(0, salary - payload.existing_loans - payload.monthly_expenses), color: 'var(--green)' }
+  ];
+  barsEl.innerHTML = bars.map(b => {
+    const pct = salary > 0 ? Math.min(100, (b.val / salary) * 100) : 0;
+    return `<div class="bar-row">
+      <div class="bar-label">${b.label}</div>
+      <div class="bar-track"><div class="bar-fill" data-pct="${pct}" style="background:${b.color}"></div></div>
+      <div class="bar-val">₹${b.val.toLocaleString('en-IN')}</div>
+    </div>`;
+  }).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+
+  // ML Probabilities
+  const probEl = document.getElementById('prob-bars');
+  const probs = ml.probabilities || {};
+  const probColors = { 'Low Risk': 'var(--green)', 'Medium Risk': 'var(--orange)', 'High Risk': 'var(--danger)' };
+  probEl.innerHTML = Object.keys(probs).length > 0
+    ? Object.entries(probs).map(([k, v]) => `
+      <div class="prob-row">
+        <div class="prob-label-row"><span>${k}</span><span class="prob-pct">${v}%</span></div>
+        <div class="prob-bar"><div class="prob-fill" data-pct="${v}" style="background:${probColors[k] || 'var(--accent)'}"></div></div>
+      </div>`).join('')
+    : `
+      <div class="prob-row">
+        <div class="prob-label-row"><span>Model status</span><span class="prob-pct">Unavailable</span></div>
+        <div class="prob-bar"><div class="prob-fill" data-pct="0" style="background:var(--muted)"></div></div>
+      </div>`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.prob-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+
+  // Explanations
+  const expEl = document.getElementById('explanations');
+  const explanations = Array.isArray(data.explanations) ? data.explanations : [];
+  const reasons = Array.isArray(data.reasons) ? data.reasons : [];
+  if (explanations.length > 0) {
+    expEl.innerHTML = explanations.map(e => `
+      <div class="explanation-item">
+        <div class="exp-severity sev-${e.severity || 'medium'}"></div>
+        <div class="exp-content">
+          <div class="exp-factor">${e.factor || 'Reason'}</div>
+          <div class="exp-message">${e.message || ''}</div>
+        </div>
+        <div class="exp-value">${e.value || '⚠️'}</div>
+      </div>
+    `).join('');
+  } else if (reasons.length > 0) {
+    expEl.innerHTML = reasons.map(r => `
+      <div class="explanation-item">
+        <div class="exp-severity sev-medium"></div>
+        <div class="exp-content">
+          <div class="exp-factor">Reason</div>
+          <div class="exp-message">${r}</div>
+        </div>
+        <div class="exp-value">⚠️</div>
+      </div>
+    `).join('');
+  } else {
+    expEl.innerHTML = `
+      <div class="explanation-item">
+        <div class="exp-severity sev-low"></div>
+        <div class="exp-content">
+          <div class="exp-factor">Status</div>
+          <div class="exp-message">No major risk factors detected</div>
+        </div>
+        <div class="exp-value">✅</div>
+      </div>
+    `;
+  }
+
+  // Suggestions
+  const sugEl = document.getElementById('suggestions');
+  const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+  sugEl.innerHTML = suggestions.length > 0
+    ? suggestions.map(s => `
+      <div class="suggestion-card">
+        <div class="sug-icon">${s.icon || '💡'}</div>
+        <div class="sug-title">${s.title || 'Recommendation'}</div>
+        <div class="sug-desc">${s.description || ''}</div>
+        <span class="sug-priority pri-${s.priority || 'low'}">${s.priority || 'low'}</span>
+      </div>`).join('')
+    : `
+      <div class="suggestion-card">
+        <div class="sug-icon">💡</div>
+        <div class="sug-title">No recommendations available</div>
+        <div class="sug-desc">The analyzer did not return any suggestions for this profile.</div>
+        <span class="sug-priority pri-low">low</span>
+      </div>`;
+
+  // Scroll
+  setTimeout(() => {
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+</script>
+</body>
+</html>
