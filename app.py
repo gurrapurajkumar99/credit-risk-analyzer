@@ -53,11 +53,11 @@ def health():
 # -----------------------------
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     # -------- VALIDATION --------
-    if not data:
-        return jsonify({'error': 'No data received'}), 400
+    if not isinstance(data, dict):
+        return jsonify({'error': 'Invalid JSON'}), 400
 
     try:
         salary = float(data.get('salary', 0))
@@ -156,14 +156,12 @@ def get_stats():
 
 
 # -----------------------------
-# RUN SERVER
+# RUN SERVER (IMPORTANT FIX)
 # -----------------------------
 if __name__ == '__main__':
-    import os
+    port = int(os.environ.get('PORT', 5000))  # 🔥 dynamic port
 
-    port = 5001   # 🔥 force change (no env confusion)
+    print(f"🚀 Starting server on port {port}")
+    print(f"👉 http://127.0.0.1:{port}")
 
-    print(f"🚀 Starting Flask server on port {port}...")
-    print(f"👉 Open: http://127.0.0.1:{port}/")
-
-    app.run(debug=True, host='127.0.0.1', port=port)
+    app.run(host='0.0.0.0', port=port, debug=False)
