@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.filterwarnings('ignore')
@@ -16,6 +18,20 @@ class MLModel:
         self.trained = False
         self.labels = ['Low Risk', 'Medium Risk', 'High Risk']
         self.employment_map = {'salaried': 0, 'self-employed': 1, 'student': 2}
+        self.feature_names = [
+            'monthly_salary',
+            'existing_loan_emis',
+            'monthly_expenses',
+            'credit_score',
+            'employment_type'
+        ]
+        self.training_summary = {
+            'algorithm': 'Logistic Regression',
+            'training_rows': 0,
+            'accuracy': 0,
+            'features': self.feature_names,
+            'classes': self.labels
+        }
 
     def _generate_training_data(self, n=2000):
         np.random.seed(42)
@@ -55,9 +71,28 @@ class MLModel:
 
     def train(self):
         X, y = self._generate_training_data()
-        X_scaled = self.scaler.fit_transform(X)
-        self.model.fit(X_scaled, y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X,
+            y,
+            test_size=0.2,
+            random_state=42,
+            stratify=y
+        )
+
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+
+        self.model.fit(X_train_scaled, y_train)
+        predictions = self.model.predict(X_test_scaled)
         self.trained = True
+        self.training_summary = {
+            'algorithm': 'Logistic Regression',
+            'training_rows': int(len(X_train)),
+            'test_rows': int(len(X_test)),
+            'accuracy': round(float(accuracy_score(y_test, predictions)) * 100, 1),
+            'features': self.feature_names,
+            'classes': self.labels
+        }
 
     def _encode_employment(self, employment_type):
         return self.employment_map.get(employment_type.lower(), 0)
@@ -82,3 +117,6 @@ class MLModel:
                 'High Risk': round(float(probabilities[2]) * 100, 1)
             }
         }
+
+    def get_summary(self):
+        return self.training_summary

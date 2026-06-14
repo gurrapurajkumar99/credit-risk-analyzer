@@ -15,6 +15,36 @@ db = Database()
 risk_engine = RiskEngine()
 ml_model = MLModel()
 
+PROJECT_CONTEXT = {
+    'motto': 'Make credit decisions fast, explainable, and accessible for non-technical stakeholders.',
+    'purpose': (
+        'This prototype helps applicants and lending teams estimate credit risk using '
+        'transparent financial ratios plus a machine-learning comparison model.'
+    ),
+    'login_decision': (
+        'Login is intentionally not required for the demo because the app does not store '
+        'private identity documents or account-specific workflows. In production, auth '
+        'would be added for borrower accounts, loan officer review queues, and audit logs.'
+    ),
+    'stakeholders': [
+        {
+            'role': 'Applicant',
+            'need': 'Understand loan readiness before applying.',
+            'dashboard_value': 'Receives a risk category, factor breakdown, and improvement suggestions.'
+        },
+        {
+            'role': 'Loan Officer',
+            'need': 'Screen applications consistently and explain decisions clearly.',
+            'dashboard_value': 'Compares rule-based and ML outputs with the reasoning behind each score.'
+        },
+        {
+            'role': 'Risk Manager',
+            'need': 'Monitor portfolio-level risk trends.',
+            'dashboard_value': 'Uses aggregate dashboard metrics, high-risk ratio, and model agreement rate.'
+        }
+    ]
+}
+
 # Train ML model
 try:
     ml_model.train()
@@ -46,6 +76,16 @@ def history():
 @app.route('/health')
 def health():
     return jsonify({'status': 'ok'})
+
+
+@app.route('/api/project-info')
+def project_info():
+    return jsonify(PROJECT_CONTEXT)
+
+
+@app.route('/api/model-info')
+def model_info():
+    return jsonify(ml_model.get_summary())
 
 
 # -----------------------------

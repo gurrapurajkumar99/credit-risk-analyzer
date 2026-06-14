@@ -1,91 +1,98 @@
-Credit Risk Analyzer 
+# AI-Based Credit Risk Analyzer
 
-An AI-powered credit risk analysis system built using Python (Flask), Machine Learning, and SQLite.
-It evaluates a user’s financial profile and predicts loan eligibility using both rule-based scoring and a Logistic Regression ML model.
+An explainable credit risk web application built with Python, Flask, SQLite, and scikit-learn. The project predicts Low, Medium, or High risk from a user's financial profile and explains the decision in language that non-technical stakeholders can understand.
 
-⸻
+## Main Motto
 
-Live Demo
+Make credit decisions fast, explainable, and accessible for non-technical stakeholders.
 
-Coming soon (deployment in progress)
+This project is designed as a fintech prototype for:
 
-⸻
+- Applicants who want to understand loan readiness before applying.
+- Loan officers who need consistent risk screening and clear decision reasons.
+- Risk managers who want dashboard-level insight into portfolio risk patterns.
 
-Features
-	•	Rule-Based Risk Engine
-Evaluates financial health using Debt-to-Income ratio, expenses, and credit score
-	•	Machine Learning Model
-Logistic Regression model trained on realistic synthetic financial data
-	•	Explainable AI
-Provides clear, factor-by-factor explanations for each decision
-	•	Smart Recommendations
-Personalized suggestions to improve loan approval chances
-	•	Analytics Dashboard
-Visual insights powered by Chart.js
-	•	History Tracking
-Stores and retrieves past analyses using SQLite
+## Live Demo
 
-⸻
+Deployment target: Render Free Web Service.
 
-Tech Stack
-	•	Backend: Python 3.11+, Flask
-	•	Machine Learning: scikit-learn, NumPy, Pandas
-	•	Frontend: HTML, CSS, JavaScript, Chart.js
-	•	Database: SQLite
+After connecting the GitHub repository on Render, use:
 
-⸻
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Health check path: `/health`
 
-Project Structure
+The repo also includes `render.yaml` for blueprint-style setup.
 
+## Features
+
+- Rule-based scoring engine using debt-to-income ratio, expense ratio, credit score, disposable income, and employment type.
+- Logistic Regression model trained on 2,000 synthetic financial profiles.
+- Explainable AI output with factor-by-factor reasoning.
+- Smart recommendations to improve loan eligibility.
+- Analytics dashboard with risk distribution, model agreement, score trends, and stakeholder context.
+- SQLite history tracking for previous analyses.
+- Deployment-ready Flask configuration with Gunicorn and dynamic port support.
+
+## Tech Stack
+
+- Backend: Python, Flask
+- Machine Learning: scikit-learn, NumPy
+- Database: SQLite
+- Frontend: HTML, CSS, JavaScript, Chart.js
+- Deployment: Render / Gunicorn
+
+## Project Structure
+
+```text
 credit_risk_analyzer/
-├── app.py                  # Flask app (routes + APIs)
+├── app.py                  # Flask routes and APIs
+├── models/
+│   └── database.py         # SQLite storage layer
 ├── services/
 │   ├── risk_engine.py      # Rule-based scoring logic
-│   └── ml_model.py         # ML model
-├── models/
-│   └── database.py         # Database handling
+│   └── ml_model.py         # Logistic Regression classifier
 ├── templates/
-│   ├── index.html
-│   ├── dashboard.html
-│   └── history.html
+│   ├── index.html          # Analyzer form and result page
+│   ├── dashboard.html      # Analytics and stakeholder dashboard
+│   └── history.html        # Saved analysis records
+├── render.yaml             # Render deployment config
+├── Procfile                # Gunicorn start command
+├── runtime.txt             # Python version hint
 ├── requirements.txt
 └── README.md
+```
 
+## Setup Locally
 
-⸻
-
-Setup & Run
-
-# Create virtual environment
+```bash
 python -m venv venv
-
-# Activate (Mac/Linux)
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run app
 python app.py
+```
 
-Open in browser:
-http://localhost:5000
+Open:
 
-⸻
+```text
+http://127.0.0.1:5000
+```
 
-API Endpoints
+## API Endpoints
 
-Method	Endpoint	Description
-POST	/api/analyze	Perform risk analysis
-GET	/api/history	Get all records
-GET	/api/history/	Get specific record
-GET	/api/stats	Get analytics
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/health` | Deployment health check |
+| GET | `/api/project-info` | Motto, stakeholders, and login decision |
+| GET | `/api/model-info` | ML algorithm, training rows, accuracy, and features |
+| POST | `/api/analyze` | Run credit risk analysis |
+| GET | `/api/history` | Get recent saved analyses |
+| GET | `/api/history/<id>` | Get one saved analysis |
+| GET | `/api/stats` | Dashboard aggregate metrics |
 
+## Sample Request
 
-⸻
-
-Sample Request
-
+```json
 {
   "salary": 75000,
   "existing_loans": 15000,
@@ -93,59 +100,111 @@ Sample Request
   "credit_score": 720,
   "employment_type": "salaried"
 }
+```
 
+## Sample Response
 
-⸻
-
-Sample Response
-
+```json
 {
   "risk_score": 82,
   "risk_category": "Low Risk",
+  "factors": {
+    "dti": 20,
+    "expense_ratio": 40,
+    "credit_score": 720,
+    "net_income": 30000,
+    "employment_type": "salaried"
+  },
   "ml_prediction": {
     "risk_category": "Low Risk",
     "confidence": 91.2
   }
 }
+```
 
+## Scoring Logic
 
-⸻
+The rule-based score is a safety score from 0 to 100. Higher is safer.
 
-Scoring Logic
+- Low Risk: score >= 70
+- Medium Risk: score >= 40 and < 70
+- High Risk: score < 40
 
-Rule-Based Score (0–100, higher = safer)
+The scoring engine evaluates:
 
-The system evaluates:
-	•	Debt-to-Income Ratio
-	•	Expense Ratio
-	•	Credit Score
-	•	Net Disposable Income
-	•	Employment Stability
+- Debt-to-income ratio
+- Expense ratio
+- Credit score
+- Net disposable income
+- Employment stability
 
-⸻
+## Machine Learning Approach
 
-Machine Learning
-	•	Model: Logistic Regression
-	•	Data: 2,000 synthetic financial profiles
-	•	Output: Risk category + probability
+The ML model uses Logistic Regression because it is fast, interpretable, and suitable for a student/internship-level fintech prototype.
 
-⸻
+Features used:
 
-Key Highlights
-	•	Combines finance logic + machine learning
-	•	Provides transparent decision-making
-	•	Designed as a real-world fintech prototype
+- Monthly salary
+- Existing monthly loan EMIs
+- Monthly expenses
+- Credit score
+- Employment type
 
-⸻
+The model is trained on synthetic profiles because this public portfolio project should not include real private financial data.
 
-Author
+## Is Login Required?
 
-Raj Kumar Gurrapu
-https://github.com/gurrapurajkumar99
+For this demo, login is intentionally not required.
 
-⸻
+Reason: the current application is a public analysis prototype. It does not store real identity documents, bank statements, or account-specific workflows.
 
- If you like this project, consider giving it a star!
+In a production version, login would be added for:
 
+- Borrower accounts
+- Loan officer review queues
+- Admin dashboards
+- Audit logs
+- Secure personal financial history
 
-⸻
+## Resume Alignment
+
+Resume point:
+
+> Built a credit risk prediction system using financial datasets with Low/Medium/High risk classification.
+
+Project evidence:
+
+- Rule engine and Logistic Regression both classify users into Low, Medium, or High risk.
+- The API returns model confidence and probabilities for each class.
+
+Resume point:
+
+> Performed data cleaning, feature engineering, and generated explainable reports for non-technical stakeholders.
+
+Project evidence:
+
+- Inputs are validated and normalized before analysis.
+- Financial ratios such as DTI, expense ratio, and disposable income act as engineered features.
+- Results include plain-English explanations, factor severity, and recommendations.
+
+## Interview Talking Points
+
+- Why combine rules and ML?
+  Rules are transparent and easy to explain. ML gives a second opinion and probability-based comparison.
+
+- Why Logistic Regression?
+  It is interpretable, efficient, and appropriate for classification with structured financial features.
+
+- Why SQLite?
+  SQLite is simple for a prototype and good for local/demo history. Production can move to PostgreSQL.
+
+- Why no login?
+  Auth is unnecessary for a public prototype. It becomes necessary when storing user-specific private financial data.
+
+- What would you improve next?
+  Add real anonymized datasets, PostgreSQL, user authentication, model monitoring, fairness checks, and loan officer approval workflows.
+
+## Author
+
+Raj Kumar Gurrapu  
+GitHub: https://github.com/gurrapurajkumar99

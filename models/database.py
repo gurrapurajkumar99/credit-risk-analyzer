@@ -1,14 +1,19 @@
 from pathlib import Path
 import sqlite3
 from datetime import datetime
+import os
 
-DB_PATH = Path(__file__).resolve().parent.parent / 'credit_risk.db'
+DB_PATH = Path(os.environ.get(
+    'CREDIT_RISK_DB',
+    Path(__file__).resolve().parent.parent / 'credit_risk.db'
+))
 
 class Database:
     def __init__(self):
         self._init_db()
 
     def _get_conn(self):
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         return conn
@@ -62,8 +67,30 @@ class Database:
                 SELECT risk_category, COUNT(*) as count FROM analyses GROUP BY risk_category
             ''').fetchall()
             avg_score = conn.execute('SELECT AVG(risk_score) as avg FROM analyses').fetchone()['avg']
+            avg_credit = conn.execute('SELECT AVG(credit_score) as avg FROM analyses').fetchone()['avg']
+            avg_salary = conn.execute('SELECT AVG(salary) as avg FROM analyses').fetchone()['avg']
+            agreement = conn.execute('''
+                SELECT
+                    SUM(CASE WHEN risk_category = ml_risk_category THEN 1 ELSE 0 END) as matched,
+                    COUNT(*) as total
+                FROM analyses
+            ''').fetchone()
+            latest = conn.execute('''
+                SELECT id, risk_score, risk_category, ml_risk_category, created_at
+                FROM analyses
+                ORDER BY created_at DESC
+                LIMIT 1
+            ''').fetchone()
+
+            matched = agreement['matched'] or 0
+            agreement_total = agreement['total'] or 0
+
             return {
                 'total': total,
                 'by_category': {r['risk_category']: r['count'] for r in by_cat},
-                'average_score': round(avg_score, 1) if avg_score else 0
+                'average_score': round(avg_score, 1) if avg_score else 0,
+                'average_credit_score': round(avg_credit, 1) if avg_credit else 0,
+                'average_salary': round(avg_salary, 2) if avg_salary else 0,
+                'model_agreement_rate': round((matched / agreement_total) * 100, 1) if agreement_total else 0,
+                'latest_analysis': dict(latest) if latest else None
             }

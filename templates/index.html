@@ -170,8 +170,43 @@
     font-size: 17px;
     color: var(--muted);
     max-width: 520px;
-    margin-bottom: 60px;
+    margin-bottom: 32px;
     font-weight: 300;
+  }
+
+  .motto-grid {
+    display: grid;
+    grid-template-columns: 1.2fr repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .motto-card {
+    background: rgba(14,21,32,0.78);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+
+  .motto-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .motto-card strong {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .motto-card p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
   }
 
   /* FORM CARD */
@@ -800,6 +835,7 @@
     nav { padding: 16px 20px; }
     .nav-links { display: none; }
     .hero, .form-container, #results { padding-left: 20px; padding-right: 20px; }
+    .motto-grid { grid-template-columns: 1fr; }
     .form-grid, .results-grid { grid-template-columns: 1fr; }
     .score-card { flex-direction: column; text-align: center; }
     .emp-toggle { grid-template-columns: 1fr; }
@@ -821,7 +857,25 @@
 <section class="hero">
   <div class="hero-tag">AI-Powered Credit Intelligence</div>
   <h1>Evaluate Loan <em>Eligibility</em><br>Before You Apply</h1>
-  <p class="hero-sub">Enter your financial profile and get an instant risk assessment powered by rule-based scoring and ML classification.</p>
+  <p class="hero-sub">Motto: make credit decisions fast, explainable, and accessible for non-technical stakeholders.</p>
+  <div class="motto-grid">
+    <div class="motto-card">
+      <div class="motto-label">Why this exists</div>
+      <p>It converts income, EMI, expenses, credit score, and employment stability into a clear Low/Medium/High risk decision.</p>
+    </div>
+    <div class="motto-card">
+      <strong>Applicant</strong>
+      <p>Checks readiness and sees what to improve before applying.</p>
+    </div>
+    <div class="motto-card">
+      <strong>Loan Officer</strong>
+      <p>Reviews a consistent score with transparent reasons.</p>
+    </div>
+    <div class="motto-card">
+      <strong>Risk Manager</strong>
+      <p>Tracks aggregate portfolio risk on the dashboard.</p>
+    </div>
+  </div>
 </section>
 
 <div class="form-container">
