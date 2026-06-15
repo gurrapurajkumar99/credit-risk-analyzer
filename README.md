@@ -16,6 +16,8 @@ This project is designed as a fintech prototype for:
 
 Deployment target: Render Free Web Service.
 
+Live website: https://credit-risk-analyzer.onrender.com
+
 After connecting the GitHub repository on Render, use:
 
 - Build command: `pip install -r requirements.txt`
@@ -26,13 +28,14 @@ The repo also includes `render.yaml` for blueprint-style setup.
 
 ## Features
 
-- Rule-based scoring engine using debt-to-income ratio, expense ratio, credit score, disposable income, and employment type.
-- Logistic Regression model trained on 2,000 synthetic financial profiles.
-- Explainable AI output with factor-by-factor reasoning.
-- Smart recommendations to improve loan eligibility.
-- Analytics dashboard with risk distribution, model agreement, score trends, and stakeholder context.
-- SQLite history tracking for previous analyses.
-- Deployment-ready Flask configuration with Gunicorn and dynamic port support.
+- Rule-based scoring engine using debt-to-income ratio, FOIR, expense ratio, credit score, disposable income, and employment type.
+- Machine learning comparision using Logistic Regression with probability scores and confidence.
+- Approval probability and final decision engine for lender-style approval guidance.
+- Explainable AI output with factor-by-factor reasoning and actionable recommendations.
+- Smart recommendations to improve loan eligibility, affordability, and creditworthiness.
+- Professional analytics dashboard with risk distribution, approval gauge, trends, and stakeholder context.
+- History page with saved borrower evaluations, rule vs ML comparison, and decision tracking.
+- SQLite persistence for demo history plus deployment-ready Flask configuration.
 
 ## Tech Stack
 
