@@ -1,3 +1,4 @@
+
 AI-Based Credit Risk Analyzer
 
 An AI-powered Credit Risk Analysis System built using Python, Flask, SQLite, and Machine Learning. The application evaluates a user’s financial profile, predicts credit risk levels, and provides explainable recommendations to support informed financial decision-making.
@@ -233,3 +234,4 @@ Raj Kumar Gurrapu
 GitHub: https://github.com/gurrapurajkumar99
 
 LinkedIn: https://linkedin.com/in/rajkumargurrapu
+
