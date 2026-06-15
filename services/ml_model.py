@@ -30,7 +30,8 @@ class MLModel:
             'training_rows': 0,
             'accuracy': 0,
             'features': self.feature_names,
-            'classes': self.labels
+            'classes': self.labels,
+            'trained': False
         }
 
     def _generate_training_data(self, n=2000):
@@ -91,15 +92,19 @@ class MLModel:
             'test_rows': int(len(X_test)),
             'accuracy': round(float(accuracy_score(y_test, predictions)) * 100, 1),
             'features': self.feature_names,
-            'classes': self.labels
+            'classes': self.labels,
+            'trained': True
         }
+
+    def ensure_trained(self):
+        if not self.trained:
+            self.train()
 
     def _encode_employment(self, employment_type):
         return self.employment_map.get(employment_type.lower(), 0)
 
     def predict(self, salary, existing_loans, monthly_expenses, credit_score, employment_type):
-        if not self.trained:
-            return {'risk_category': 'Unknown', 'confidence': 0, 'probabilities': {}}
+        self.ensure_trained()
 
         emp_encoded = self._encode_employment(employment_type)
         features = np.array([[salary, existing_loans, monthly_expenses, credit_score, emp_encoded]])

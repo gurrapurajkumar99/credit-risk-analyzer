@@ -45,12 +45,13 @@ PROJECT_CONTEXT = {
     ]
 }
 
-# Train ML model
-try:
-    ml_model.train()
-    print("✅ ML Model trained successfully")
-except Exception as e:
-    print("❌ ML training failed:", e)
+def ensure_ml_model():
+    try:
+        ml_model.ensure_trained()
+        return True, None
+    except Exception as e:
+        print("ML training failed:", e)
+        return False, str(e)
 
 # -----------------------------
 # ROUTES (PAGES)
@@ -85,7 +86,11 @@ def project_info():
 
 @app.route('/api/model-info')
 def model_info():
-    return jsonify(ml_model.get_summary())
+    trained, error = ensure_ml_model()
+    summary = ml_model.get_summary()
+    if not trained:
+        summary = {**summary, 'trained': False, 'error': error}
+    return jsonify(summary)
 
 
 # -----------------------------

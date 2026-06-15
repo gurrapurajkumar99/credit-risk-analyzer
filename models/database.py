@@ -3,10 +3,13 @@ import sqlite3
 from datetime import datetime
 import os
 
-DB_PATH = Path(os.environ.get(
-    'CREDIT_RISK_DB',
-    Path(__file__).resolve().parent.parent / 'credit_risk.db'
-))
+DEFAULT_DB_PATH = (
+    Path('/tmp/credit_risk.db')
+    if os.environ.get('VERCEL')
+    else Path(__file__).resolve().parent.parent / 'credit_risk.db'
+)
+
+DB_PATH = Path(os.environ.get('CREDIT_RISK_DB', DEFAULT_DB_PATH))
 
 class Database:
     def __init__(self):
